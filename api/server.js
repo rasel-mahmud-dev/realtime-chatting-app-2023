@@ -13,6 +13,13 @@ const app = express();
 app.use(morgan("dev"));
 app.use(cors())
 
+
+
+app.get("/", (req, res, next)=>{
+    res.send("sdffffffffff")
+})
+
+
 const httpServer = http.createServer(app);
 
 
@@ -22,11 +29,11 @@ let io = new Server(httpServer, {
     }
 })
 
+
 io.on("connection", (socket)=>{
-    console.log(socket.id, " -connected")
+    console.log(socket.id, " - connected")
 
     socket.on("send-message", (payload)=>{
-        console.log(payload)
         io.emit("received-msg", payload)
     })
 
@@ -34,7 +41,6 @@ io.on("connection", (socket)=>{
         console.log(socket.connected)
         console.log(socket.id)
     });
-
 })
 
 const PORT = 2000
