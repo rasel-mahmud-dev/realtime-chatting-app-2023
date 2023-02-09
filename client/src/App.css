@@ -1,0 +1,10 @@
+
+.App{
+    max-width: 1000px;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.btn{
+    @apply !bg-blue-500 text-sm px-3 py-2 rounded text-white
+}
