@@ -1,9 +1,13 @@
 import React, {useState} from 'react';
+import {loginAction} from "../redux/actions/authAction";
+import {useDispatch} from "react-redux";
 
 const Login = () => {
 
+    const dispatch = useDispatch()
+
     const [userInfo, setUserInfo] = useState({
-        username: "",
+        email: "",
         password: ""
     })
 
@@ -15,9 +19,12 @@ const Login = () => {
     }
 
     function handleLogin(e){
+        e.preventDefault();
         if(!userInfo.email || !userInfo.password){
             return;
         }
+
+        dispatch(loginAction(userInfo))
 
 
     }
