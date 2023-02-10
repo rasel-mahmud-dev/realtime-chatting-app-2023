@@ -5,12 +5,18 @@ import io from "socket.io-client"
 import Login from "./components/Login";
 import Navigation from "./components/Navigation";
 import {Outlet} from "react-router-dom";
+import {fetchCurrentAuth} from "./redux/actions/authAction";
+import {useDispatch} from "react-redux";
 
 let socket = io("http://localhost:2000")
 
 function App() {
 
     const [socketId, setSocketId] = useState(socket?.id)
+
+
+    const dispatch = useDispatch()
+
 
     const [messages, setMessages] = useState([])
 
@@ -55,6 +61,10 @@ function App() {
 
         }
     }
+
+    useEffect(()=>{
+        dispatch(fetchCurrentAuth())
+    }, [])
 
     return (
         <div className="App">
