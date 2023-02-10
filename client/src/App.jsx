@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import './App.css'
 
 import io from "socket.io-client"
+import Login from "./components/Login";
 
 let socket = io("http://localhost:2000")
 
@@ -61,14 +62,7 @@ function App() {
                 <button className="btn" onClick={toggleConnection}>{socketId ? "Disconnect" : "Connect Now"}</button>
             </div>
 
-            <form className="max-w-sm mx-auto shadow p-2 rounded mt-10" onSubmit={sendMessage}>
-                <div>
-                    <label htmlFor="" className="font-medium text-sm my-2">Message</label>
-                    <textarea  className="w-full outline-none bg-gray-100 p-2 text-sm text-gray-700" rows={5}
-                              name="message"></textarea>
-                </div>
-                <button type="submit" className="btn mt-2">Send Message</button>
-            </form>
+           <Login />
 
 
             <div className="bg-gray-100 p-4 rounded-lg mt-5">
