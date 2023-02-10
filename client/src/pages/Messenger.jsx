@@ -1,18 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchCurrentChatFriendProfileAction} from "../redux/actions/usersAction";
 import getFirstLetter from "../utils/getFirstLetter";
 import {HiEllipsisVertical} from "react-icons/all";
+import socketContext from "../socket/SocketContext";
 
 const Messenger = () => {
-    let messages = []
+
 
     const {friendId} = useParams()
     const dispatch = useDispatch()
     const [room, setRoom] = useState("")
 
-    const {auth, currentChatFriend} = useSelector(state=>state.authState)
+    const {auth, currentChatFriend, messages} = useSelector(state=>state.authState)
+
+    const {socket, setSocket} = useContext(socketContext)
 
     // fetch old message
     useEffect(()=>{
@@ -30,6 +33,7 @@ const Messenger = () => {
     }, [friendId, auth])
 
 
+
     function handleSendMessage(e){
         e.preventDefault()
 
@@ -37,8 +41,10 @@ const Messenger = () => {
         // if(!room){
         //     alert("No room selected")
         // }
-        console.log(room)
-        console.log(value)
+        // console.log(room)
+        // console.log(value)
+
+        socket.emit("send-message", value)
     }
 
 
@@ -50,6 +56,7 @@ const Messenger = () => {
                         <div className="list-item" >
                             <div className="circle">{getFirstLetter(currentChatFriend.username)}</div>
                             <div className="text-3xl font-semibold">{currentChatFriend.username}</div>
+                            <span className={`bullet ${currentChatFriend.isOnline ? "active": "inactive"}`}></span>
                         </div>
                         <div className="circle !bg-transparent hover:!bg-dark-50 cursor-pointer">
                             <HiEllipsisVertical />
@@ -61,7 +68,7 @@ const Messenger = () => {
             <div className="bg-dark-50 p-4 rounded-lg mt-5">
                 <div className="">
                     {messages.map((msg) => (
-                        <div className={`mt-2 py-2 break-words px-4 w-1/2 rounded-lg text-white bg-blue-500 w-auto ${msg.userId === socketId ? "ml-auto ": "mr-auto "}`}>
+                        <div className={`mt-2 py-2 break-words px-4 w-1/2 rounded-lg text-white bg-blue-500 w-auto ${msg.userId === socket.id ? "ml-auto ": "mr-auto "}`}>
                             <p className="whitespace-pre-line">{msg.text}</p>
                         </div>
                     ))}

@@ -17,7 +17,8 @@ router.get("/",   async (req, res, next) => {
             select: {
                 id: true,
                 username: true,
-                email: true
+                email: true,
+                isOnline: true
             }
         })
 
@@ -44,7 +45,8 @@ router.get("/:friendId",   async (req, res, next) => {
             select: {
                 username: true,
                 email: true,
-                id: true
+                id: true,
+                isOnline: true,
             }
         })
         if(friend){

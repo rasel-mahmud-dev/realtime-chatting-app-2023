@@ -19,6 +19,24 @@ const authSlice = createSlice({
             state.authLoading = true
         },
 
+        // update friend online active status
+        updateFriendStatus: (state, action)=>{
+            let findFriend = state.currentChatFriend && state.currentChatFriend.id === action.payload.id
+            if(findFriend){
+                state.currentChatFriend = {
+                    ...state.currentChatFriend,
+                    ...action.payload
+                }
+            }
+        },
+
+        addMessageAction: (state, action) => {
+            let updatedMessage = [...state.messages]
+            updatedMessage.push(action.payload)
+            state.messages = updatedMessage
+            return state
+        },
+
     },
     extraReducers: (builder)=> {
         builder.addCase(loginAction.fulfilled, (state, action) => {
@@ -65,5 +83,5 @@ const authSlice = createSlice({
 })
 
 
-export const {logoutAction} = authSlice.actions
+export const {logoutAction, addMessageAction, updateFriendStatus} = authSlice.actions
 export default authSlice

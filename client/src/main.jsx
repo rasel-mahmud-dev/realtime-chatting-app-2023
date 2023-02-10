@@ -5,12 +5,17 @@ import './index.css'
 import {RouterProvider} from "react-router-dom";
 import router from "./rotues";
 import store from "./redux/store";
+import SocketProvider from "./socket/SocketProvider";
+
+
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+    // <React.StrictMode>
         <Provider store={store}>
-            <RouterProvider router={router}/>
+            <SocketProvider>
+                <RouterProvider router={router}/>
+            </SocketProvider>
         </Provider>
-    </React.StrictMode>,
+    // </React.StrictMode>,
 )

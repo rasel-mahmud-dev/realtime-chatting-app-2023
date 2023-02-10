@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import './App.scss'
 
 import io from "socket.io-client"
@@ -6,13 +6,17 @@ import Login from "./components/Login";
 import Navigation from "./components/Navigation";
 import {Outlet} from "react-router-dom";
 import {fetchCurrentAuth} from "./redux/actions/authAction";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
-let socket = io("http://localhost:2000")
+import SocketContext from "./socket/SocketContext";
+import {addMessageAction, updateFriendStatus} from "./redux/ slices/authSlice";
+
 
 function App() {
 
-    const [socketId, setSocketId] = useState(socket?.id)
+    let {socket, setSocket} = useContext(SocketContext)
+
+    const {auth} = useSelector(state => state.authState)
 
 
     const dispatch = useDispatch()
@@ -21,17 +25,41 @@ function App() {
     const [messages, setMessages] = useState([])
 
     useEffect(() => {
-        socket.once("connect", (s) => {
-            setSocketId(socket.id)
-        })
+        if (auth) {
+            let s = io("http://localhost:2000")
+            s.emit("join-online", auth.id)
 
-        socket.on("received-msg", (s) => {
-            storeMessage(s)
-        })
+            // event listener for join user notification
+            s.on("join-online-response", (userId) => {
+                console.log("successfully join on online " + userId)
+                dispatch(updateFriendStatus({
+                    id: userId,
+                    isOnline: true
+                }))
+            })
+            setSocket(s)
+        }
+    }, [auth])
 
-    }, [])
 
-    function storeMessage(text){
+
+
+    useEffect(() => {
+        if (socket) {
+            // received message event listener
+            socket.on("received-msg", (s) => {
+                dispatch(addMessageAction({text: s.text, roomId: s.roomId}))
+            })
+
+            // event listener for user leave notification
+            socket.on("leave-online-response", (userId)=>{
+                console.log("successfully leave from online ", userId)
+                dispatch(updateFriendStatus({id: userId, isOnline: false}))
+            })
+        }
+    }, [socket])
+
+    function storeMessage(text) {
         setMessages([
             ...messages,
             {text: text}
@@ -41,46 +69,38 @@ function App() {
 
     function sendMessage(e) {
         e.preventDefault()
-        if(!socket) return;
+        if (!socket) return;
         let msg = e.target.message.value
         e.target.message.value = ""
         socket.emit("send-message", msg)
     }
 
 
+    function toggleConnection() {
+        if (!socket) return;
 
-    function toggleConnection(){
-        if(!socket) return;
-
-        if(socketId){
-            socket.disconnect()
-            setSocketId(0)
-            setMessages([])
-        } else {
-            // re connect socket connection
-
-        }
+        // if(socketId){
+        //     socket.disconnect()
+        //     setSocketId(0)
+        //     setMessages([])
+        // } else {
+        //     // re connect socket connection
+        //
+        // }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(fetchCurrentAuth())
     }, [])
+
 
     return (
         <div className="App">
 
-            <Navigation />
+            <Navigation/>
             <div className="header-space"></div>
 
-            {/*<div className="bg-blue-600 mt-3 flex justify-between p-4 items-center text-white rounded">*/}
-            {/*    <h2 className="text-center">{socketId ? "Connected" : "Not connected"}</h2>*/}
-            {/*    <button className="btn" onClick={toggleConnection}>{socketId ? "Disconnect" : "Connect Now"}</button>*/}
-            {/*</div>*/}
-
-
-
-
-            <Outlet />
+            <Outlet/>
 
         </div>
     )

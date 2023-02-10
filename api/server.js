@@ -92,12 +92,55 @@ io.on("connection", (socket) => {
     console.log(socket.id, " - connected")
 
     socket.on("send-message", (payload) => {
-        io.emit("received-msg", payload)
+        io.emit("received-msg", {
+            text: payload,
+            roomId: "sdfffffffffff"
+        })
     })
 
+
+
+    // when user join site or login then this event listener fn call
+    socket.on("join-online", async (userId) => {
+        try{
+            let update = await client.user.update({
+                where: {
+                    id: Number(userId)
+                },
+                data: {
+                    isOnline: true
+                }
+            })
+            io.emit("join-online-response", userId)
+
+        } catch (ex){
+            console.log(ex)
+        }
+    });
+
+
+    // when user leave site or logout then this event listener fn call
+    socket.on("leave-online", async (userId) => {
+        try{
+            let update = await client.user.update({
+                where: {
+                    id: Number(userId)
+                },
+                data: {
+                    isOnline: false
+                }
+            })
+            io.emit("leave-online-response", userId)
+
+        } catch (ex){
+            console.log(ex)
+        }
+    });
+
+
+
     socket.on("disconnect", async () => {
-        console.log(socket.connected)
-        console.log(socket.id)
+        console.log(socket.id, " leave")
     });
 })
 

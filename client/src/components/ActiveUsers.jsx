@@ -25,10 +25,12 @@ const ActiveUsers = () => {
             <h4 className="text-lg font-medium">Active Users</h4>
 
             <ul>
-                {users.map(user=> (auth && auth.id !== user.id) &&  (
+                {users.map(user=> (!auth || auth.id !== user.id) &&  (
                     <div className="list-item" onClick={()=>startOneToOneChat(user)}>
                         <div className="circle">{getFirstLetter(user.username)}</div>
                         <div className="">{user.username}</div>
+
+                        <span className={`bullet ${user.isOnline ? "active": "inactive"}`}></span>
                     </div>
                 ))}
             </ul>
