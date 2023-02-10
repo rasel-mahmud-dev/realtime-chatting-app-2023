@@ -38,7 +38,7 @@ let io = new Server(httpServer, {
 io.on("connection", (socket) => {
     console.log(socket.id, " - connected")
 
-    socket.on("send-message", ({text, senderId, roomId}) => {
+    socket.on("send-message", async ({text, senderId, roomId}) => {
         // for send all listener
         // io.emit("received-msg", {
         //     text: payload,
@@ -46,32 +46,45 @@ io.on("connection", (socket) => {
         // })
 
 
+        // broadcast to other participant
         io.to(roomId).emit("received-msg", {
             text: text,
             roomId: roomId,
             senderId: senderId
         })
+        // also store in database
+        try{
+            let newRoom = await client.message.create({
+                data: {
+                    roomId: roomId,
+                    text: text,
+                    seen: false,
+                    senderId: senderId,
+                }
+            })
+        } catch (ex){}
     })
 
 
 
     // when user join private room for one to one chatting
     socket.on("join-private-room", async (roomId) => {
-        socket.join(roomId)
-        // try{
-        //     let update = await client.user.update({
-        //         where: {
-        //             id: Number(userId)
-        //         },
-        //         data: {
-        //             isOnline: true
-        //         }
-        //     })
-        //     io.emit("join-online-response", userId)
-        //
-        // } catch (ex){
-        //     console.log(ex)
-        // }
+
+        try{
+            await socket.join(roomId)
+            let newRoom = await client.room.upsert({
+                where: {
+                    roomId: roomId
+                },
+                update: {},
+                create: {
+                    roomId: roomId
+                }
+            })
+
+        } catch (ex){
+            console.log(ex)
+        }
     });
 
 

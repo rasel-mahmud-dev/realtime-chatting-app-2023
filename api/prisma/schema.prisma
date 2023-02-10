@@ -14,18 +14,30 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   email     String   @unique
-  password     String
-  username      String?
-  isOnline      Boolean?
+  password  String
+  username  String?
+  isOnline  Boolean?
 
   Message Message[]
 }
 
+model Room {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  roomId    String    @unique
+  Message   Message[]
+}
+
 model Message {
-  id        Int      @id @default(autoincrement())
+  id   Int     @id @default(autoincrement())
+  text String?
+  seen Boolean @default(false)
+
+  senderId Int?
+  sender   User? @relation(fields: [senderId], references: [id])
+
+  roomId String?
+  room   Room?   @relation(fields: [roomId], references: [roomId])
+
   createdAt DateTime @default(now())
-  userId    Int?
-  user      User?    @relation(fields: [userId], references: [id])
-  text      String?
-  seen      Boolean  @default(false)
 }

@@ -7,7 +7,8 @@
 - login and registration.
 - user can see who are in currently online (activity status).
 - user active status update when he/she leave site or login /logout
-- user can create private room to send message one to one. like facebook chat
+- user can create private room to send message one to one. like facebook chat.
+- use can see their previous chat message.
 
 ### Database
 - MySQL
@@ -18,17 +19,20 @@ User
 - username
 - password
 - email 
-- isOnline
+- isOnline (boolean)
+
+
+Room
+- roomId (unique)
 
 Message
 - text 
-- senderId 
-- roomId 
+- senderId (User)
+- receiverId (User)
+- roomId (Room Table rootId ref)
 - createdAt 
-- seen
+- seen (boolean)
 
-Room
-- roomId
 
 
 ### Packages 
