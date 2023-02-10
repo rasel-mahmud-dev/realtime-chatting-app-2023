@@ -2,8 +2,14 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 const API  = "http://localhost:2000"
 
 
-export const fetchMessageAction = createAsyncThunk("authState/message", async (roomId)=>{
+export const fetchMessageAction = createAsyncThunk("authState/message", async (roomId, ThunkAPI)=>{
     try{
+
+        let state = ThunkAPI.getState()
+
+        if(state?.authState?.messages?.[roomId]){
+            return;
+        }
 
         let token = localStorage.getItem("token") || ""
         let res = await fetch(API + "/api/messages/"+roomId, {
@@ -20,7 +26,10 @@ export const fetchMessageAction = createAsyncThunk("authState/message", async (r
         if(res.status > 400){
             throw Error(result.message)
         } else{
-            return result
+            return {
+                messages: result,
+                roomId: roomId
+            }
         }
 
     }catch (ex){

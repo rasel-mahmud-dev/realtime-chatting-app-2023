@@ -9,7 +9,7 @@ const authSlice = createSlice({
         auth: null,
         authLoading: false,
         users: [],
-        messages: [],
+        messages: {}, // caching for all roomId
         currentChatFriend: {}
     },
     reducers: {
@@ -31,9 +31,18 @@ const authSlice = createSlice({
         },
 
         addMessageAction: (state, action) => {
-            let updatedMessage = [...state.messages]
-            updatedMessage.push(action.payload)
-            state.messages = updatedMessage
+            let updatedMessage = {...state.messages}
+            if(action.payload.roomId){
+                if(updatedMessage[action.payload.roomId]){
+                    updatedMessage[action.payload.roomId] = [
+                        ...updatedMessage[action.payload.roomId],
+                        action.payload
+                    ]
+                } else {
+                    updatedMessage[action.payload.roomId] = [action.payload]
+                }
+                state.messages = updatedMessage
+            }
             return state
         },
 
@@ -69,8 +78,8 @@ const authSlice = createSlice({
         })
 
         builder.addCase(fetchMessageAction.fulfilled, (state, action) => {
-            if(action.payload){
-                state.messages = action.payload
+            if(action.payload?.roomId){
+                state.messages[action.payload.roomId] = action.payload.messages
             }
         })
 

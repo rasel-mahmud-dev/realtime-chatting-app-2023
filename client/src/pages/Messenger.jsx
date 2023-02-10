@@ -42,10 +42,10 @@ const Messenger = () => {
 
         if(socket){
             // received message event listener
-            socket.on("received-msg", ({senderId, rootId, text}) => {
+            socket.on("received-msg", ({senderId, roomId, text}) => {
                 dispatch(addMessageAction({
                     senderId,
-                    rootId,
+                    roomId,
                     text,
                     user: {
                         id: auth.id,
@@ -132,7 +132,7 @@ const Messenger = () => {
 
                             <div className="message-list">
                                 <div className="">
-                                    {messages.map((msg) => (
+                                    {messages && messages[room]?.map((msg) => (
                                         <div
                                             className={`message-item  ${isYour(msg) ? "message-item-own" : "message-item-friend"}`}>
                                             <div
