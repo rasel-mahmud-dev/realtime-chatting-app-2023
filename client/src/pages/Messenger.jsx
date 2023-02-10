@@ -5,6 +5,7 @@ import {fetchCurrentChatFriendProfileAction} from "../redux/actions/usersAction"
 import getFirstLetter from "../utils/getFirstLetter";
 import {BiSend, HiEllipsisVertical} from "react-icons/all";
 import socketContext from "../socket/SocketContext";
+import {fetchMessageAction} from "../redux/actions/messageAction";
 
 const Messenger = () => {
 
@@ -23,7 +24,7 @@ const Messenger = () => {
 
             let roomId = (auth.id + friendId).split("").sort().join("")
             setRoom(roomId)
-            // dispatch(fetchMessageAction(roomId))
+            dispatch(fetchMessageAction(roomId))
         }
 
         if(friendId){

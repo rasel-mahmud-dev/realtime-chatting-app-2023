@@ -2,11 +2,11 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 const API  = "http://localhost:2000"
 
 
-export const fetchMessageAction = createAsyncThunk("authState/message", async (payload)=>{
+export const fetchMessageAction = createAsyncThunk("authState/message", async (roomId)=>{
     try{
 
         let token = localStorage.getItem("token") || ""
-        let res = await fetch(API + "/api/messages/"+payload, {
+        let res = await fetch(API + "/api/messages/"+roomId, {
             method: "GET",
             headers: {
                 "Content-type": "application/json",

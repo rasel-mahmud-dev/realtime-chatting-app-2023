@@ -12,9 +12,16 @@ router.get("/:roomId",   async (req, res, next) => {
         let messages = await client.message.findMany({
             where: {
                 roomId: roomId
+            },
+            select: {
+                text: true,
+                createdAt: true,
+                id: true,
+                seen: true
             }
         })
-        console.log(messages)
+
+       res.status(200).json(messages)
 
     } catch (ex) {
         res.send(ex.message)
