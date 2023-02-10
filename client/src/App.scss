@@ -167,3 +167,15 @@
         }
     }
 }
+
+.container_div{
+    height: 200px;
+    width: 200px;
+    overflow-y: auto;
+}
+
+.chat_message {
+    height: calc(100vh - 300px);
+    overflow-y: auto;
+    padding: 0 30px;
+}

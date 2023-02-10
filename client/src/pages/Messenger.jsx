@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../redux/actions/usersAction";
@@ -7,12 +7,14 @@ import {BiSend, HiEllipsisVertical} from "react-icons/all";
 import {fetchMessageAction} from "../redux/actions/messageAction";
 import {addMessageAction} from "../redux/ slices/authSlice";
 import {io} from "socket.io-client";
+import ScrollBottom from "../components/ScrollBottom";
 
 
 const Messenger = () => {
     const {friendId} = useParams()
     const dispatch = useDispatch()
     const [room, setRoom] = useState("")
+    const messageListRef = useRef()
 
     const {auth, currentChatFriend, messages, users} = useSelector(state => state.authState)
 
@@ -112,6 +114,8 @@ const Messenger = () => {
         return msg.senderId === auth.id
     }
 
+
+
     return (
         <div className="container">
             <div className="messenger">
@@ -125,6 +129,7 @@ const Messenger = () => {
                                 <div className="">{user.username}</div>
 
                                 <span className={`bullet ${user.isOnline ? "active" : "inactive"}`}></span>
+
                             </div>
                         ))}
                     </ul>
@@ -143,6 +148,7 @@ const Messenger = () => {
                                             <div className="text-3xl font-semibold">{currentChatFriend.username}</div>
                                             <span
                                                 className={`bullet ${currentChatFriend.isOnline ? "active" : "inactive"}`}></span>
+                                            <div>Active <Timer oldDate={currentChatFriend.lastActive} /> ago</div>
                                         </div>
                                         <div className="circle !bg-transparent hover:!bg-dark-50 cursor-pointer">
                                             <HiEllipsisVertical/>
@@ -152,7 +158,8 @@ const Messenger = () => {
                             </div>
 
                             <div className="message-list">
-                                <div className="">
+                                <ScrollBottom watcher={messages[room]} containerRef={messageListRef}>
+                                    <div className="chat_message" ref={messageListRef}>
                                     {messages && messages[room]?.map((msg) => (
                                         <div
                                             className={`message-item  ${isYour(msg) ? "message-item-own" : "message-item-friend"}`}>
@@ -162,6 +169,7 @@ const Messenger = () => {
                                         </div>
                                     ))}
                                 </div>
+                                </ScrollBottom>
                             </div>
                             <div className="message-fixed-input">
                                 <div className="container">
@@ -185,5 +193,29 @@ const Messenger = () => {
         </div>
     );
 };
+
+function Timer(props){
+
+    const timerId = useRef()
+
+    let [date, setDate] =useState(0)
+    function renderActiveTime(lastActive){
+        let mili = new Date() - new Date(lastActive)
+        let second = mili / 1000
+        let min = second / 60
+        return min
+    }
+
+    useEffect(()=>{
+        timerId.current = setInterval(()=>{
+            let s = renderActiveTime(props.oldDate)
+            setDate(s)
+        }, 1000)
+
+        return ()=> timerId.current && clearInterval(timerId.current)
+    }, [props.oldDate])
+
+    return date
+}
 
 export default Messenger;

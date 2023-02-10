@@ -46,6 +46,7 @@ router.get("/:friendId",   async (req, res, next) => {
                 username: true,
                 email: true,
                 id: true,
+                lastActive: true,
                 isOnline: true,
             }
         })

@@ -68,39 +68,6 @@ io.on("connection", (socket) => {
     })
 
 
-    //
-    // // when user join private room for one to one chatting
-    // socket.on("join-private-room", async (roomId) => {
-    //
-    //     try{
-    //         await socket.join(roomId)
-    //         let newRoom = await client.room.upsert({
-    //             where: {
-    //                 roomId: roomId
-    //             },
-    //             update: {},
-    //             create: {
-    //                 roomId: roomId
-    //             }
-    //         })
-    //
-    //     } catch (ex){
-    //         console.log(ex)
-    //     }
-    // });
-    //
-    // // when user join private room for one to one chatting
-    // socket.on("leave-private-room", async (roomId) => {
-    //     try{
-    //         await socket.leave(roomId)
-    //         console.log("leave ", roomId)
-    //     } catch (ex){
-    //         console.log(ex)
-    //     }
-    // });
-    //
-
-
     // when user join site or login then this event listener fn call
     socket.on("join-online", async (userId) => {
         try{
@@ -128,7 +95,8 @@ io.on("connection", (socket) => {
                     id: Number(userId)
                 },
                 data: {
-                    isOnline: false
+                    isOnline: false,
+                    lastActive: new Date()
                 }
             })
             io.emit("leave-online-response", userId)
@@ -138,11 +106,6 @@ io.on("connection", (socket) => {
         }
     });
 
-
-    //
-    // socket.on("disconnect", async () => {
-    //     console.log(socket.id, " leave")
-    // });
 })
 
 const messengerNamespace = io.of("/messenger");
@@ -160,14 +123,14 @@ messengerNamespace.on("connection", (socket) => {
         })
         // also store in database
         try{
-            // let newRoom = await client.message.create({
-            //     data: {
-            //         roomId: roomId,
-            //         text: text,
-            //         seen: false,
-            //         senderId: senderId,
-            //     }
-            // })
+            let newRoom = await client.message.create({
+                data: {
+                    roomId: roomId,
+                    text: text,
+                    seen: false,
+                    senderId: senderId,
+                }
+            })
         } catch (ex){}
     })
 

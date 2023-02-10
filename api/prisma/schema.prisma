@@ -18,6 +18,8 @@ model User {
   username  String?
   isOnline  Boolean?
 
+  lastActive  DateTime @default(now())
+
   Message Message[]
 }
 

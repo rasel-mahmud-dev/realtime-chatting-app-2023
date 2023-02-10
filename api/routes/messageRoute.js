@@ -19,7 +19,7 @@ router.get("/:roomId",   async (req, res, next) => {
                 id: true,
                 seen: true,
                 senderId: true,
-                user: {
+                sender: {
                     select: {
                         id: true,
                         username: true
@@ -27,7 +27,6 @@ router.get("/:roomId",   async (req, res, next) => {
                 }
             },
         })
-
        res.status(200).json(messages)
 
     } catch (ex) {
