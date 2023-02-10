@@ -6,10 +6,7 @@
 }
 
 .App {
-    max-width: 1000px;
-    margin: auto;
-    padding-left: 20px;
-    padding-right: 20px;
+
 }
 
 .btn {
@@ -42,12 +39,7 @@
 }
 
 .message-fixed-input {
-    width: 100%;
-    position: fixed;
-    left: 0;
-    bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+
     textarea {
 
     }
@@ -126,5 +118,53 @@
 
     &.inactive {
         background: #505050;
+    }
+}
+
+.messenger {
+
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    column-gap: 20px;
+
+    .message-sidebar {
+        background: #2f2f2f;
+    }
+
+    .chatting-box{
+        @apply relative h-screen w-full
+    }
+
+    .message-list {
+        @apply bg-dark-30 p-4 rounded-lg mt-5;
+        height: 700px;
+        overflow-y: auto;
+
+        .message-item {
+            @apply mt-2 py-2 break-words px-4  rounded-lg text-white flex items-center gap-x-1;
+            width: max-content;
+            p{
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .item {
+
+            }
+        }
+
+        .message-item-own {
+            flex-direction: row-reverse;
+            text-align: right;
+            margin-left: auto;
+            p{
+                background: #151515;
+            }
+        }
+
+        .message-item-friend {
+            p{
+                background: #2c65ec;
+            }
+        }
     }
 }

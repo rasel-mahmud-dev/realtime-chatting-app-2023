@@ -17,8 +17,15 @@ router.get("/:roomId",   async (req, res, next) => {
                 text: true,
                 createdAt: true,
                 id: true,
-                seen: true
-            }
+                seen: true,
+                senderId: true,
+                user: {
+                    select: {
+                        id: true,
+                        username: true
+                    }
+                }
+            },
         })
 
        res.status(200).json(messages)
