@@ -5,16 +5,17 @@ import React from "react";
 import Login from "./components/Login";
 import HomePage from "./pages/HomePage";
 import Register from "./components/Register";
+import PrivateRoute from "./middleware/PrivateRoute";
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App />,
+        element: <App/>,
         children: [
-            {path: "", element: <HomePage /> },
-            {path: "login", element: <Login /> },
-            {path: "register", element: <Register /> },
-            {path: "messenger", element: <Messenger /> },
+            {path: "", element: <HomePage/>},
+            {path: "login", element: <Login/>},
+            {path: "register", element: <Register/>},
+            {path: "messenger/:roomId", element: <PrivateRoute><Messenger/></PrivateRoute>},
         ]
     }
 ]);

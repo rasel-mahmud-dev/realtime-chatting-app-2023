@@ -1,7 +1,21 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useParams} from "react-router-dom";
 
 const Messenger = () => {
     let messages = []
+
+    const {roomId} = useParams()
+
+
+    // fetch old message
+    useEffect(()=>{
+        console.log(roomId)
+
+
+    }, [roomId])
+
+
+
     return (
         <div>
             <div className="bg-gray-100 p-4 rounded-lg mt-5">

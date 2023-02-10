@@ -2,12 +2,14 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {fetchUsersAction} from "../redux/actions/usersAction";
 import getFirstLetter from "../utils/getFirstLetter";
+import {useNavigate} from "react-router-dom";
 
 const ActiveUsers = () => {
 
     const dispatch = useDispatch()
-    const {users}  = useSelector(state=>state.authState)
+    const {users, auth}  = useSelector(state=>state.authState)
 
+    const navigate = useNavigate()
 
     useEffect(()=>{
         dispatch(fetchUsersAction())
@@ -15,7 +17,7 @@ const ActiveUsers = () => {
 
 
     function startOneToOneChat(user){
-        console.log(user)
+        navigate("/messenger/"+user.id)
     }
 
     return (
@@ -23,7 +25,7 @@ const ActiveUsers = () => {
             <h4 className="text-lg font-medium">Active Users</h4>
 
             <ul>
-                {users.map(user=>(
+                {users.map(user=> (auth && auth.id !== user.id) &&  (
                     <div className="list-item" onClick={()=>startOneToOneChat(user)}>
                         <div className="circle">{getFirstLetter(user.username)}</div>
                         <div className="">{user.username}</div>
