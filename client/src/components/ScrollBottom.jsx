@@ -1,12 +1,12 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 
 
 const ScrollBottom = (props)=>{
-    const [ state, setState ] = React.useState({ scrollHeight: 0 })
+    const [ state, setState ] = useState({ scrollHeight: 0 })
     const { watcher, containerRef, children } = props
 
 
-    React.useEffect(()=>{
+    useEffect(()=>{
         if(containerRef){
             if(containerRef.current){
                 let scrollHeight = containerRef.current.scrollHeight

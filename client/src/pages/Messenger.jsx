@@ -8,6 +8,7 @@ import {fetchMessageAction} from "../redux/actions/messageAction";
 import {addMessageAction} from "../redux/ slices/authSlice";
 import {io} from "socket.io-client";
 import ScrollBottom from "../components/ScrollBottom";
+import ActiveTimer from "../components/ActiveTimer";
 
 
 const Messenger = () => {
@@ -20,7 +21,7 @@ const Messenger = () => {
 
     const navigate = useNavigate()
 
-    let [messengerNsp, setMessengerNsp ] = useState()
+    let [messengerNsp, setMessengerNsp] = useState()
 
 
     // fetch old message
@@ -41,7 +42,7 @@ const Messenger = () => {
     // join private group for one to one
     useEffect(() => {
         let socket;
-        if(!socket){
+        if (!socket) {
             socket = io("http://localhost:2000/messenger")
             setMessengerNsp(socket)
         } else {
@@ -52,7 +53,7 @@ const Messenger = () => {
             socket.emit("join-private-room", room)
         }
 
-        if(socket){
+        if (socket) {
             // received message event listener
             socket.on("received-msg", ({senderId, roomId, text}) => {
                 dispatch(addMessageAction({
@@ -67,9 +68,9 @@ const Messenger = () => {
             })
         }
 
-        return ()=>{
+        return () => {
             // clear event listener
-            if(socket){
+            if (socket) {
                 socket.emit("leave-private-room", room)
                 socket.off('connect');
                 socket.off('disconnect');
@@ -78,9 +79,7 @@ const Messenger = () => {
             }
         }
 
-    }, [ room])
-
-
+    }, [room])
 
 
     // fetch all users
@@ -115,7 +114,6 @@ const Messenger = () => {
     }
 
 
-
     return (
         <div className="container">
             <div className="messenger">
@@ -143,12 +141,16 @@ const Messenger = () => {
                             <div>
                                 {currentChatFriend && (
                                     <div className="flex justify-between items-center bg-dark-30 rounded-lg px-4">
-                                        <div className="list-item">
-                                            <div className="circle">{getFirstLetter(currentChatFriend.username)}</div>
-                                            <div className="text-3xl font-semibold">{currentChatFriend.username}</div>
-                                            <span
-                                                className={`bullet ${currentChatFriend.isOnline ? "active" : "inactive"}`}></span>
-                                            <div>Active <Timer oldDate={currentChatFriend.lastActive} /> ago</div>
+                                        <div className="list-item items-center">
+                                           <div className="flex items-center gap-x-2">
+                                               <div className="circle">{getFirstLetter(currentChatFriend.username)}</div>
+                                               <div className="text-3xl font-semibold">{currentChatFriend.username}</div>
+                                           </div>
+                                            <div className="flex items-center gap-x-2 ml-4">
+                                                <span
+                                                    className={`bullet ${currentChatFriend.isOnline ? "active" : "inactive"}`}></span>
+                                                <ActiveTimer isOnline={currentChatFriend.isOnline} oldDate={currentChatFriend.lastActive}/>
+                                            </div>
                                         </div>
                                         <div className="circle !bg-transparent hover:!bg-dark-50 cursor-pointer">
                                             <HiEllipsisVertical/>
@@ -160,15 +162,15 @@ const Messenger = () => {
                             <div className="message-list">
                                 <ScrollBottom watcher={messages[room]} containerRef={messageListRef}>
                                     <div className="chat_message" ref={messageListRef}>
-                                    {messages && messages[room]?.map((msg) => (
-                                        <div
-                                            className={`message-item  ${isYour(msg) ? "message-item-own" : "message-item-friend"}`}>
+                                        {messages && messages[room]?.map((msg) => (
                                             <div
-                                                className="circle !w-8 !h-8 !text-xs">{getFirstLetter(currentChatFriend.username)}</div>
-                                            <p className="whitespace-pre-line">{msg.text}</p>
-                                        </div>
-                                    ))}
-                                </div>
+                                                className={`message-item  ${isYour(msg) ? "message-item-own" : "message-item-friend"}`}>
+                                                <div
+                                                    className="circle !w-8 !h-8 !text-xs">{getFirstLetter(currentChatFriend.username)}</div>
+                                                <p className="whitespace-pre-line">{msg.text}</p>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </ScrollBottom>
                             </div>
                             <div className="message-fixed-input">
@@ -194,28 +196,5 @@ const Messenger = () => {
     );
 };
 
-function Timer(props){
-
-    const timerId = useRef()
-
-    let [date, setDate] =useState(0)
-    function renderActiveTime(lastActive){
-        let mili = new Date() - new Date(lastActive)
-        let second = mili / 1000
-        let min = second / 60
-        return min
-    }
-
-    useEffect(()=>{
-        timerId.current = setInterval(()=>{
-            let s = renderActiveTime(props.oldDate)
-            setDate(s)
-        }, 1000)
-
-        return ()=> timerId.current && clearInterval(timerId.current)
-    }, [props.oldDate])
-
-    return date
-}
 
 export default Messenger;
