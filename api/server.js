@@ -1,7 +1,8 @@
-const http = require("http");
-const express = require("express");
-const morgan = require("morgan");
-const cors = require('cors')
+import http  from "http";
+import express from "express";
+
+import morgan from "morgan";
+import cors from "cors"
 
 
 require("dotenv").config({})
@@ -15,13 +16,17 @@ app.use(cors())
 
 
 
-app.get("/", (req, res, next)=>{
-    res.send("sdffffffffff")
+app.get("/", async (req, res, next)=>{
+
+
+
 })
 
 
-const httpServer = http.createServer(app);
 
+
+
+const httpServer = http.createServer(app);
 
 let io = new Server(httpServer, {
     cors: {
@@ -46,4 +51,5 @@ io.on("connection", (socket)=>{
 const PORT = 2000
 
 httpServer.listen(PORT, () =>console.info(`server is running on port http://localhost:${PORT}`))
+
 
