@@ -29,3 +29,23 @@ export const fetchUsersAction = createAsyncThunk("authState/users", async (paylo
         throw Error(ex.message)
     }
 })
+
+
+
+export const fetchCurrentChatFriendProfileAction = createAsyncThunk("authState/currentChatFriendProfile", async (payload, ThunkApi)=>{
+    try{
+
+        let res = await fetch(API + "/api/users/"+payload)
+
+        let result = await res.json()
+
+        if(res.status > 400){
+            throw Error(result.message)
+        } else{
+            return result
+        }
+
+    }catch (ex){
+        throw Error(ex.message)
+    }
+})

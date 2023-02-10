@@ -33,6 +33,35 @@ router.get("/",   async (req, res, next) => {
 })
 
 
+router.get("/:friendId",   async (req, res, next) => {
+
+    const {friendId} = req.params
+    try {
+        let friend = await client.user.findUnique({
+            where: {
+                id: Number(friendId)
+            },
+            select: {
+                username: true,
+                email: true,
+                id: true
+            }
+        })
+        if(friend){
+            res.status(200).json(friend)
+        } else {
+            res.status(404).json({message: "People not found"})
+        }
+
+    } catch (ex) {
+        res.send(ex.message)
+    }
+})
+
+
+
+
+
 
 
 

@@ -1,13 +1,16 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {loginAction, registerAction} from "../actions/authAction";
-import { fetchUsersAction} from "../actions/usersAction";
+import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../actions/usersAction";
+import {fetchMessageAction} from "../actions/messageAction";
 
 const authSlice = createSlice({
     name: 'authState',
     initialState: {
         auth: null,
         authLoading: false,
-        users: []
+        users: [],
+        messages: [],
+        currentChatFriend: {}
     },
     reducers: {
         incremented: state => {
@@ -44,6 +47,18 @@ const authSlice = createSlice({
         builder.addCase(fetchUsersAction.fulfilled, (state, action) => {
             if(action.payload){
                 state.users = action.payload
+            }
+        })
+
+        builder.addCase(fetchMessageAction.fulfilled, (state, action) => {
+            if(action.payload){
+                state.messages = action.payload
+            }
+        })
+
+        builder.addCase(fetchCurrentChatFriendProfileAction.fulfilled, (state, action) => {
+            if(action.payload){
+                state.currentChatFriend = action.payload
             }
         })
     }

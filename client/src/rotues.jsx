@@ -15,7 +15,7 @@ const router = createBrowserRouter([
             {path: "", element: <HomePage/>},
             {path: "login", element: <Login/>},
             {path: "register", element: <Register/>},
-            {path: "messenger/:roomId", element: <PrivateRoute><Messenger/></PrivateRoute>},
+            {path: "messenger/:friendId", element: <PrivateRoute><Messenger/></PrivateRoute>},
         ]
     }
 ]);

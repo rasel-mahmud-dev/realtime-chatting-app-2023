@@ -1,24 +1,51 @@
 import React, {useEffect} from 'react';
 import {useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchMessageAction} from "../redux/actions/messageAction";
+import {fetchCurrentChatFriendProfileAction} from "../redux/actions/usersAction";
+import getFirstLetter from "../utils/getFirstLetter";
 
 const Messenger = () => {
     let messages = []
 
-    const {roomId} = useParams()
+    const {friendId} = useParams()
+    const dispatch = useDispatch()
 
+    const {auth, currentChatFriend} = useSelector(state=>state.authState)
 
     // fetch old message
     useEffect(()=>{
-        console.log(roomId)
+        if(auth && friendId){
 
+            // let roomId = (auth.id + friendId).split("").sort().join("")
+            // dispatch(fetchMessageAction(roomId))
+        }
 
-    }, [roomId])
+        if(friendId){
+            dispatch(fetchCurrentChatFriendProfileAction(friendId))
+        }
+
+    }, [friendId, auth])
+
+    console.log(currentChatFriend)
 
 
 
     return (
         <div>
-            <div className="bg-gray-100 p-4 rounded-lg mt-5">
+
+            <div>
+                {currentChatFriend && (
+                    <div>
+                        <div className="list-item" >
+                            <div className="circle">{getFirstLetter(currentChatFriend.username)}</div>
+                            <div className="text-3xl font-semibold">{currentChatFriend.username}</div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="bg-dark-50 p-4 rounded-lg mt-5">
                 <div className="">
                     {messages.map((msg) => (
                         <div className={`mt-2 py-2 break-words px-4 w-1/2 rounded-lg text-white bg-blue-500 w-auto ${msg.userId === socketId ? "ml-auto ": "mr-auto "}`}>
