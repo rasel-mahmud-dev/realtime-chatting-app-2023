@@ -26,59 +26,6 @@ app.get("/", async (req, res, next) => {
 })
 
 
-app.get("/user/:email", async (req, res, next) => {
-
-    try {
-        let user = await client.user.findUnique({
-            where: {email: req.params.email}
-        })
-        res.send(user)
-    } catch (ex) {
-        res.send(ex.message)
-    }
-
-})
-
-
-app.post("/user", async (req, res, next) => {
-    try {
-        const {username, email, password} = req.body
-        let newUser = await client.user.create({
-            data: {
-                username, email, password
-            }
-        })
-        res.send(newUser)
-    } catch (ex) {
-        res.send(ex.message)
-    }
-
-})
-
-
-
-
-app.delete("/user/:userId", async (req, res, next) => {
-    try {
-        const {userId} = req.params
-        let deleted = await client.user.delete({
-            where: {
-                id: Number(userId)
-            }
-        })
-        if (deleted) {
-            res.send("User deleted")
-
-        } else {
-            res.send("User not found")
-        }
-    } catch (ex) {
-        res.send(ex.message)
-    }
-
-})
-
-
 const httpServer = http.createServer(app);
 
 let io = new Server(httpServer, {
@@ -91,12 +38,41 @@ let io = new Server(httpServer, {
 io.on("connection", (socket) => {
     console.log(socket.id, " - connected")
 
-    socket.on("send-message", (payload) => {
-        io.emit("received-msg", {
-            text: payload,
-            roomId: "sdfffffffffff"
+    socket.on("send-message", ({text, senderId, roomId}) => {
+        // for send all listener
+        // io.emit("received-msg", {
+        //     text: payload,
+        //     roomId: "sdfffffffffff"
+        // })
+
+
+        io.to(roomId).emit("received-msg", {
+            text: text,
+            roomId: roomId,
+            senderId: senderId
         })
     })
+
+
+
+    // when user join private room for one to one chatting
+    socket.on("join-private-room", async (roomId) => {
+        socket.join(roomId)
+        // try{
+        //     let update = await client.user.update({
+        //         where: {
+        //             id: Number(userId)
+        //         },
+        //         data: {
+        //             isOnline: true
+        //         }
+        //     })
+        //     io.emit("join-online-response", userId)
+        //
+        // } catch (ex){
+        //     console.log(ex)
+        // }
+    });
 
 
 

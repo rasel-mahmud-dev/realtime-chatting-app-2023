@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchCurrentChatFriendProfileAction} from "../redux/actions/usersAction";
 import getFirstLetter from "../utils/getFirstLetter";
-import {HiEllipsisVertical} from "react-icons/all";
+import {BiSend, HiEllipsisVertical} from "react-icons/all";
 import socketContext from "../socket/SocketContext";
 
 const Messenger = () => {
@@ -33,20 +33,29 @@ const Messenger = () => {
     }, [friendId, auth])
 
 
+    // join private group for one to one
+    useEffect(()=>{
+        if(socket && room){
+            socket.emit("join-private-room", room)
+        }
+    }, [socket, room])
+
 
     function handleSendMessage(e){
         e.preventDefault()
 
         let value = e.target.message.value
-        // if(!room){
-        //     alert("No room selected")
-        // }
-        // console.log(room)
-        // console.log(value)
+        if(!room) return alert("No room selected")
 
-        socket.emit("send-message", value)
+
+        // send message to server to broadcast to other participant
+        socket.emit("send-message", {
+            text: value,
+            roomId: room,
+            senderId: auth.id,
+        })
+        e.target.message.value = ""
     }
-
 
     return (
         <div className="relative h-screen">
@@ -78,9 +87,9 @@ const Messenger = () => {
 
             <div className="message-fixed-input">
               <div className="container">
-                  <form onSubmit={handleSendMessage} className="w-full">
+                  <form onSubmit={handleSendMessage} className="w-full flex gap-x-2 items-center">
                       <textarea className="input" name="message"></textarea>
-                      <button type="submit" className="btn">Send Message</button>
+                      <button type="submit" className="btn flex items-center gap-x-1">Send <BiSend /> </button>
                   </form>
               </div>
 
