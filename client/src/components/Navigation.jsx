@@ -23,7 +23,6 @@ const Navigation = () => {
         if (socket) {
             socket.emit("leave-online", auth.id)
         }
-
         dispatch(logoutAction())
     }
 

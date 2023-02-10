@@ -49,7 +49,7 @@ function App() {
             // event listener for user leave notification
             socket.on("leave-online-response", (userId)=>{
                 console.log("successfully leave from online ", userId)
-                dispatch(updateFriendStatus({id: userId, isOnline: false, lastActive: new Date()}))
+                dispatch(updateFriendStatus({id: userId, isOnline: false, lastActive: new Date().toISOString()}))
             })
         }
     }, [socket])

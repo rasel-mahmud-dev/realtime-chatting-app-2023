@@ -16,6 +16,7 @@ const Messenger = () => {
     const dispatch = useDispatch()
     const [room, setRoom] = useState("")
     const messageListRef = useRef()
+    const messageRef = useRef()
 
     const {auth, currentChatFriend, messages, users} = useSelector(state => state.authState)
 
@@ -88,20 +89,22 @@ const Messenger = () => {
     }, [])
 
 
+
+    // shift + enter to send message
     function handleSendMessage(e) {
-        e.preventDefault()
+        if(e.shiftKey && e.keyCode === 13) {
+            let value = messageRef.current.value
 
-        let value = e.target.message.value
+            if (!room && !messengerNsp) return alert("No room selected")
 
-        if (!room && !messengerNsp) return alert("No room selected")
-
-        // send message to server to broadcast to other participant
-        messengerNsp.emit("send-message", {
-            text: value,
-            roomId: room,
-            senderId: auth.id
-        })
-        e.target.message.value = ""
+            // send message to server to broadcast to other participant
+            messengerNsp.emit("send-message", {
+                text: value,
+                roomId: room,
+                senderId: auth.id
+            })
+            messageRef.current.value = ""
+        }
     }
 
 
@@ -113,13 +116,11 @@ const Messenger = () => {
         return msg.senderId === auth.id
     }
 
-
     return (
         <div className="container">
             <div className="messenger">
                 <div className="message-sidebar">
                     <h2 className="text-xl font-semibold px-4 py-4">Friends</h2>
-
                     <ul>
                         {users.map(user => (!auth || auth.id !== user.id) && (
                             <div className="list-item" onClick={() => startOneToOneChat(user)}>
@@ -136,7 +137,6 @@ const Messenger = () => {
                 <div className="chatting-box">
                     {friendId ? (
                         <div>
-
 
                             <div>
                                 {currentChatFriend && (
@@ -175,11 +175,9 @@ const Messenger = () => {
                             </div>
                             <div className="message-fixed-input">
                                 <div className="container">
-                                    <form onSubmit={handleSendMessage} className="w-full flex gap-x-2 items-center">
-                                        <textarea className="input" name="message"></textarea>
-                                        <button type="submit" className="btn flex items-center gap-x-1">Send <BiSend/>
-                                        </button>
-                                    </form>
+                                    <div onKeyDown={handleSendMessage} className="w-full flex gap-x-2 items-center">
+                                        <textarea ref={messageRef}  className="input" name="message"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>

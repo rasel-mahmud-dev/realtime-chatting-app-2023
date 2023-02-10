@@ -61,7 +61,7 @@ function ActiveTimer(props) {
                 <h4>Online</h4>
                 ) :
                 date.value > 0 ? <div>
-                    Active {Math.round(date.value) + date.label} ago {new Date().getTime()}
+                    Active {Math.round(date.value) +  " "+ date.label} ago
                 </div> : null
             }
         </div>

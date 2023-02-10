@@ -20,6 +20,8 @@
 .container {
     max-width: 1200px;
     margin: auto;
+    padding-left: 16px;
+    padding-right: 16px;
 }
 
 .header-space {
@@ -121,18 +123,35 @@
     }
 }
 
-.messenger {
 
+@mixin custom-scrollbar() {
+    &::-webkit-scrollbar{
+        width: 5px;
+    }
+    &::-webkit-scrollbar-track{
+        background: rgba(45, 45, 45, 0.22);
+    }
+    &::-webkit-scrollbar-thumb{
+        background: rgba(63, 119, 252, 0.39);
+    }
+}
+
+
+.messenger {
+    width: 100%;
     display: grid;
     grid-template-columns: 300px 1fr;
     column-gap: 20px;
 
     .message-sidebar {
         background: #2f2f2f;
+        height: calc(100vh - var(--header-height) - 0px);
+        overflow-y: auto;
+        @include custom-scrollbar()
     }
 
     .chatting-box{
-        @apply relative h-screen w-full
+        @apply relative  w-full
     }
 
     .message-list {
@@ -140,7 +159,7 @@
         overflow-y: auto;
 
         .message-item {
-            @apply mt-2 py-2 break-words px-4  rounded-lg text-white flex items-center gap-x-1;
+            @apply mt-2 py-2 break-words px-4  rounded-lg text-white flex items-start gap-x-1;
             width: max-content;
             p{
                 padding: 10px;
@@ -178,4 +197,5 @@
     height: calc(100vh - 300px);
     overflow-y: auto;
     padding: 0 30px;
+    @include custom-scrollbar()
 }
