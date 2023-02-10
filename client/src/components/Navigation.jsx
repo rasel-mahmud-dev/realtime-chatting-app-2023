@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {Link} from "react-router-dom";
-import {BiLock, BiLogOut, BiUser} from "react-icons/all";
+import {BiLock, BiLogOut, BiUser, BsMessenger} from "react-icons/all";
 import {useDispatch, useSelector} from "react-redux";
 import Dropdown from "./Dropdown";
 import {logoutAction} from "../redux/ slices/authSlice";
@@ -16,17 +16,15 @@ const Navigation = () => {
 
     const [isOpenAuthDropdown, setIsOpenAuthDropdown] = useState(false)
 
-    function handleLogout(){
+    function handleLogout() {
 
-        if(!auth) return;
+        if (!auth) return;
 
-        if(socket){
-
-
+        if (socket) {
             socket.emit("leave-online", auth.id)
         }
 
-        // dispatch(logoutAction())
+        dispatch(logoutAction())
     }
 
     return (
@@ -44,32 +42,41 @@ const Navigation = () => {
                 <nav>
                     <ul className="flex items-center gap-x-4">
                         {auth ? (
-                            <li className="relative"
-                                onClick={()=>setIsOpenAuthDropdown(!isOpenAuthDropdown) }>
-                                <div className="flex items-center gap-x-1" >
-                                    <div
-                                        className="w-10 h-10 flex items-center justify-center bg-blue-500 rounded-full">
-                                        <BiUser className=""/>
+                            <>
+                                <li>
+                                    <Link className="flex items-center gap-x-1" to="/messenger">
+                                        <BsMessenger/>
+                                        Messenger
+                                    </Link>
+                                </li>
+                                <li className="relative"
+                                    onClick={() => setIsOpenAuthDropdown(!isOpenAuthDropdown)}>
+                                    <div className="flex items-center gap-x-1">
+                                        <div
+                                            className="w-10 h-10 flex items-center justify-center bg-blue-500 rounded-full">
+                                            <BiUser className=""/>
+                                        </div>
+                                        <div>
+                                            {auth.username}
+                                        </div>
                                     </div>
-                                    <div>
-                                        {auth.username}
-                                    </div>
-                                </div>
-                                <Dropdown isOpen={isOpenAuthDropdown} className="!absolute" onClose={()=>setIsOpenAuthDropdown(false)}>
-                                    <ul>
-                                        <li>
-                                            <Link className="flex items-center gap-x-1" to="/profile">
-                                                <BiUser/>
-                                                Profile
-                                            </Link>
-                                        </li>
-                                        <li onClick={handleLogout} className="mt-1 flex items-center gap-x-1">
-                                            <BiLogOut/>
-                                            Logout
-                                        </li>
-                                    </ul>
-                                </Dropdown>
-                            </li>
+                                    <Dropdown isOpen={isOpenAuthDropdown} className="!absolute"
+                                              onClose={() => setIsOpenAuthDropdown(false)}>
+                                        <ul>
+                                            <li>
+                                                <Link className="flex items-center gap-x-1" to="/profile">
+                                                    <BiUser/>
+                                                    Profile
+                                                </Link>
+                                            </li>
+                                            <li onClick={handleLogout} className="mt-1 flex items-center gap-x-1">
+                                                <BiLogOut/>
+                                                Logout
+                                            </li>
+                                        </ul>
+                                    </Dropdown>
+                                </li>
+                            </>
                         ) : (
                             <>
                                 <li>

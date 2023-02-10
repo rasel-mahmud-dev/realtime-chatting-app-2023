@@ -46,11 +46,6 @@ function App() {
 
     useEffect(() => {
         if (socket) {
-            // received message event listener
-            socket.on("received-msg", (s) => {
-                dispatch(addMessageAction({text: s.text, roomId: s.roomId}))
-            })
-
             // event listener for user leave notification
             socket.on("leave-online-response", (userId)=>{
                 console.log("successfully leave from online ", userId)

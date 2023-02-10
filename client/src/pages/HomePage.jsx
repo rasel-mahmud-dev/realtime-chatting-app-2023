@@ -6,21 +6,17 @@ import {useDispatch, useSelector} from "react-redux";
 const HomePage = () => {
 
     const dispatch = useDispatch()
-    const {users}  = useSelector(state=>state.authState)
+    const {users} = useSelector(state => state.authState)
 
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(fetchUsersAction())
     }, [])
 
 
-
     return (
-        <div>
-            <ActiveUsers  />
-
-
-
+        <div className="container">
+            <ActiveUsers/>
         </div>
     );
 };
