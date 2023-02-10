@@ -13,12 +13,12 @@ const authSlice = createSlice({
         currentChatFriend: {}
     },
     reducers: {
-        incremented: state => {
-            state.value += 1
+        logoutAction: state => {
+            localStorage.removeItem("token")
+            state.auth = null
+            state.authLoading = true
         },
-        decremented: state => {
-            state.value -= 1
-        }
+
     },
     extraReducers: (builder)=> {
         builder.addCase(loginAction.fulfilled, (state, action) => {
@@ -65,5 +65,5 @@ const authSlice = createSlice({
 })
 
 
-export const {} = authSlice.actions
+export const {logoutAction} = authSlice.actions
 export default authSlice

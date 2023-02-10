@@ -38,11 +38,6 @@ router.post("/login", async (req, res, next) => {
         let user = await client.user.findUnique({
             where: {
                 email
-            },
-            select: {
-                id: true,
-                username: true,
-                email: true
             }
         })
 
@@ -55,7 +50,7 @@ router.post("/login", async (req, res, next) => {
         }
 
         let token = createToken(user.id)
-        res.json({user, token})
+        res.json({user: {...user, password: ""}, token})
 
     } catch (ex) {
         res.send(ex.message)

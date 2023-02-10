@@ -1,15 +1,16 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchMessageAction} from "../redux/actions/messageAction";
 import {fetchCurrentChatFriendProfileAction} from "../redux/actions/usersAction";
 import getFirstLetter from "../utils/getFirstLetter";
+import {HiEllipsisVertical} from "react-icons/all";
 
 const Messenger = () => {
     let messages = []
 
     const {friendId} = useParams()
     const dispatch = useDispatch()
+    const [room, setRoom] = useState("")
 
     const {auth, currentChatFriend} = useSelector(state=>state.authState)
 
@@ -17,7 +18,8 @@ const Messenger = () => {
     useEffect(()=>{
         if(auth && friendId){
 
-            // let roomId = (auth.id + friendId).split("").sort().join("")
+            let roomId = (auth.id + friendId).split("").sort().join("")
+            setRoom(roomId)
             // dispatch(fetchMessageAction(roomId))
         }
 
@@ -27,19 +29,30 @@ const Messenger = () => {
 
     }, [friendId, auth])
 
-    console.log(currentChatFriend)
 
+    function handleSendMessage(e){
+        e.preventDefault()
+
+        let value = e.target.message.value
+        // if(!room){
+        //     alert("No room selected")
+        // }
+        console.log(room)
+        console.log(value)
+    }
 
 
     return (
-        <div>
-
+        <div className="relative h-screen">
             <div>
                 {currentChatFriend && (
-                    <div>
+                    <div className="flex justify-between items-center bg-dark-30 rounded-lg px-4">
                         <div className="list-item" >
                             <div className="circle">{getFirstLetter(currentChatFriend.username)}</div>
                             <div className="text-3xl font-semibold">{currentChatFriend.username}</div>
+                        </div>
+                        <div className="circle !bg-transparent hover:!bg-dark-50 cursor-pointer">
+                            <HiEllipsisVertical />
                         </div>
                     </div>
                 )}
@@ -54,6 +67,20 @@ const Messenger = () => {
                     ))}
                 </div>
             </div>
+
+
+            <div className="message-fixed-input">
+              <div className="container">
+                  <form onSubmit={handleSendMessage} className="w-full">
+                      <textarea className="input" name="message"></textarea>
+                      <button type="submit" className="btn">Send Message</button>
+                  </form>
+              </div>
+
+
+            </div>
+
+
         </div>
     );
 };
