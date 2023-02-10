@@ -30,3 +30,11 @@
 .card{
     @apply mx-auto bg-dark-20 shadow-xl p-4 rounded-lg
 }
+
+.circle{
+    @apply w-10 h-10 flex items-center justify-center bg-dark-60 text-sm rounded-full
+}
+
+.list-item{
+    @apply flex items-center gap-x-2 my-2 p-2 hover:bg-dark-40 rounded-lg cursor-pointer
+}

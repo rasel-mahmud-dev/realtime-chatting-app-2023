@@ -1,4 +1,3 @@
-
 import express from "express";
 import client from "../prisma/client";
 import auth from "../middleware/auth";
@@ -7,7 +6,7 @@ import {createToken} from "../services/jwt";
 const router = express.Router()
 
 
-router.get("/fetch-auth",  auth, async (req, res, next) => {
+router.get("/fetch-auth", auth, async (req, res, next) => {
     try {
 
         let user = await client.user.findUnique({
@@ -15,12 +14,13 @@ router.get("/fetch-auth",  auth, async (req, res, next) => {
                 id: Number(req.user.id)
             },
             select: {
+                id: true,
                 username: true,
                 email: true
             }
         })
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({message: "User not found"})
         }
 
@@ -32,21 +32,25 @@ router.get("/fetch-auth",  auth, async (req, res, next) => {
 })
 
 
-
 router.post("/login", async (req, res, next) => {
     try {
         const {email, password} = req.body
         let user = await client.user.findUnique({
             where: {
                 email
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true
             }
         })
 
-        if(!user){
+        if (!user) {
             return res.status(404).json({message: "Please Register first"})
         }
 
-        if(user.password !== password){
+        if (user.password !== password) {
             return res.status(409).json({message: "Please Provide valid password"})
         }
 
@@ -59,7 +63,6 @@ router.post("/login", async (req, res, next) => {
 })
 
 
-
 router.post("/register", async (req, res, next) => {
     try {
         const {username, email, password} = req.body
@@ -69,30 +72,32 @@ router.post("/register", async (req, res, next) => {
             }
         })
 
-        if(user){
+        if (user) {
             return res.status(404).json({message: "Already Register, Please Login"})
         }
 
         let newUser = await client.user.create({
-           data: {
-               username,
-               email,
-               password
-           }
+            data: {
+                username,
+                email,
+                password
+            }
         })
 
-       if(newUser){
-           let token = createToken(newUser.id)
-           res.json({user, token})
-       } else{
-           res.send("Registration fail")
-       }
+        if (newUser) {
+            let token = createToken(newUser.id)
+            res.json({
+                user: {...user, password: ""},
+                token
+            })
+        } else {
+            res.send("Registration fail")
+        }
 
     } catch (ex) {
         res.send(ex.message)
     }
 })
-
 
 
 export default router

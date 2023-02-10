@@ -1,11 +1,13 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {loginAction, registerAction} from "../actions/authAction";
+import { fetchUsersAction} from "../actions/usersAction";
 
 const authSlice = createSlice({
     name: 'authState',
     initialState: {
         auth: null,
-        authLoading: false
+        authLoading: false,
+        users: []
     },
     reducers: {
         incremented: state => {
@@ -37,6 +39,12 @@ const authSlice = createSlice({
         builder.addCase(registerAction.rejected, (state, action) => {
             state.auth = null
             state.authLoading = true
+        })
+
+        builder.addCase(fetchUsersAction.fulfilled, (state, action) => {
+            if(action.payload){
+                state.users = action.payload
+            }
         })
     }
 })
