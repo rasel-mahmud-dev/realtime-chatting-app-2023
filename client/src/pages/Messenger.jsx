@@ -174,12 +174,11 @@ const Messenger = () => {
                                 </ScrollBottom>
                             </div>
                             <div className="message-fixed-input">
-                                <div className="container">
+
                                     <div onKeyDown={handleSendMessage} className="w-full flex gap-x-2 items-center">
-                                        <textarea ref={messageRef}  className="input" name="message"></textarea>
+                                        <textarea placeholder="Enter your message" ref={messageRef}  className="input" name="message"></textarea>
                                     </div>
-                                </div>
-                            </div>
+                              </div>
                         </div>
 
                     ) : (

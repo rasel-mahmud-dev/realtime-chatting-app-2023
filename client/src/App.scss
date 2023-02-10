@@ -43,7 +43,8 @@
 .message-fixed-input {
 
     textarea {
-
+        height: 50px;
+        margin-top: 20px;
     }
 
 }
@@ -198,4 +199,7 @@
     overflow-y: auto;
     padding: 0 30px;
     @include custom-scrollbar()
+}
+textarea{
+    overflow:hidden
 }
