@@ -3,22 +3,20 @@ import express from "express";
 
 import morgan from "morgan";
 import cors from "cors"
-import client from "./prisma/client";
-import routes from "./routes";
 
 
 require("dotenv").config({})
 
 const {Server} = require("socket.io")
 
+import {PrismaClient} from '@prisma/client'
+
+const client = new PrismaClient()
 
 const app = express();
 app.use(express.json())
 app.use(morgan("dev"));
 app.use(cors())
-
-
-app.use(routes)
 
 
 app.get("/", async (req, res, next) => {
@@ -54,8 +52,6 @@ app.post("/user", async (req, res, next) => {
     }
 
 })
-
-
 
 
 app.delete("/user/:userId", async (req, res, next) => {
