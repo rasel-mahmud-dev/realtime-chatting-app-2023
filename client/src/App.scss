@@ -137,7 +137,6 @@
 
     .message-list {
         @apply bg-dark-30 p-4 rounded-lg mt-5;
-        height: 700px;
         overflow-y: auto;
 
         .message-item {

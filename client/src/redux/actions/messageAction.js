@@ -18,7 +18,6 @@ export const fetchMessageAction = createAsyncThunk("authState/message", async (r
                 "Content-type": "application/json",
                 token: token
             },
-
         })
 
         let result = await res.json()

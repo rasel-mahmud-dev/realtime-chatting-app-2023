@@ -4,12 +4,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../redux/actions/usersAction";
 import getFirstLetter from "../utils/getFirstLetter";
 import {BiSend, HiEllipsisVertical} from "react-icons/all";
-import socketContext from "../socket/SocketContext";
 import {fetchMessageAction} from "../redux/actions/messageAction";
 import {addMessageAction} from "../redux/ slices/authSlice";
+import {io} from "socket.io-client";
+
 
 const Messenger = () => {
-
     const {friendId} = useParams()
     const dispatch = useDispatch()
     const [room, setRoom] = useState("")
@@ -17,7 +17,9 @@ const Messenger = () => {
     const {auth, currentChatFriend, messages, users} = useSelector(state => state.authState)
 
     const navigate = useNavigate()
-    const {socket, setSocket} = useContext(socketContext)
+
+    let [messengerNsp, setMessengerNsp ] = useState()
+
 
     // fetch old message
     useEffect(() => {
@@ -36,6 +38,14 @@ const Messenger = () => {
 
     // join private group for one to one
     useEffect(() => {
+        let socket;
+        if(!socket){
+            socket = io("http://localhost:2000/messenger")
+            setMessengerNsp(socket)
+        } else {
+            socket = messengerNsp
+        }
+
         if (socket && room) {
             socket.emit("join-private-room", room)
         }
@@ -55,8 +65,20 @@ const Messenger = () => {
             })
         }
 
+        return ()=>{
+            // clear event listener
+            if(socket){
+                socket.emit("leave-private-room", room)
+                socket.off('connect');
+                socket.off('disconnect');
+                socket.off('received-msg');
+                socket.off('join-private-room');
+            }
+        }
 
-    }, [socket, room])
+    }, [ room])
+
+
 
 
     // fetch all users
@@ -69,12 +91,11 @@ const Messenger = () => {
         e.preventDefault()
 
         let value = e.target.message.value
-        if (!room) return alert("No room selected")
 
-
+        if (!room && !messengerNsp) return alert("No room selected")
 
         // send message to server to broadcast to other participant
-        socket.emit("send-message", {
+        messengerNsp.emit("send-message", {
             text: value,
             roomId: room,
             senderId: auth.id
