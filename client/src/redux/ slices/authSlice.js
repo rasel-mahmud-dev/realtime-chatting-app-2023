@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {loginAction} from "../actions/authAction";
+import {loginAction, registerAction} from "../actions/authAction";
 
 const authSlice = createSlice({
     name: 'authState',
@@ -20,6 +20,22 @@ const authSlice = createSlice({
             if(action.payload){
                 state.auth = action.payload
             }
+            state.authLoading = true
+        })
+        builder.addCase(loginAction.rejected, (state, action) => {
+            state.auth = null
+            state.authLoading = true
+        })
+
+
+        builder.addCase(registerAction.fulfilled, (state, action) => {
+            if(action.payload){
+                state.auth = action.payload
+            }
+            state.authLoading = true
+        })
+        builder.addCase(registerAction.rejected, (state, action) => {
+            state.auth = null
             state.authLoading = true
         })
     }

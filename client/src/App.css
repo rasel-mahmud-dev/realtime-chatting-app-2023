@@ -3,6 +3,7 @@
 :root{
     background: #2a2a2a;
     color: #d7d7d7;
+    --header-height: 90px
 }
 
 .App{
@@ -16,4 +17,16 @@
 }
 .input{
     @apply text-dark-600 w-full bg-transparent outline-none bg-dark-40 p-2 rounded-md text-sm
+}
+
+.container{
+    max-width: 1200px;
+    margin: auto;
+}
+.header-space{
+    height: var(--header-height);
+}
+
+.card{
+    @apply mx-auto bg-dark-20 shadow-xl p-4 rounded-lg
 }

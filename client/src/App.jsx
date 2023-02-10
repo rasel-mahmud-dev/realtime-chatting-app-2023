@@ -3,6 +3,8 @@ import './App.css'
 
 import io from "socket.io-client"
 import Login from "./components/Login";
+import Navigation from "./components/Navigation";
+import {Outlet} from "react-router-dom";
 
 let socket = io("http://localhost:2000")
 
@@ -57,23 +59,18 @@ function App() {
     return (
         <div className="App">
 
-            <div className="bg-blue-600 mt-3 flex justify-between p-4 items-center text-white rounded">
-                <h2 className="text-center">{socketId ? "Connected" : "Not connected"}</h2>
-                <button className="btn" onClick={toggleConnection}>{socketId ? "Disconnect" : "Connect Now"}</button>
-            </div>
+            <Navigation />
+            <div className="header-space"></div>
 
-           <Login />
+            {/*<div className="bg-blue-600 mt-3 flex justify-between p-4 items-center text-white rounded">*/}
+            {/*    <h2 className="text-center">{socketId ? "Connected" : "Not connected"}</h2>*/}
+            {/*    <button className="btn" onClick={toggleConnection}>{socketId ? "Disconnect" : "Connect Now"}</button>*/}
+            {/*</div>*/}
 
 
-            <div className="bg-gray-100 p-4 rounded-lg mt-5">
-                <div className="">
-                    {messages.map((msg) => (
-                        <div className={`mt-2 py-2 break-words px-4 w-1/2 rounded-lg text-white bg-blue-500 w-auto ${msg.userId === socketId ? "ml-auto ": "mr-auto "}`}>
-                            <p className="whitespace-pre-line">{msg.text}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
+
+
+            <Outlet />
 
         </div>
     )
