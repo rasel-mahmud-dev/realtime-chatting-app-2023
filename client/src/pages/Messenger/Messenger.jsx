@@ -1,14 +1,18 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../redux/actions/usersAction";
-import getFirstLetter from "../utils/getFirstLetter";
+import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../../redux/actions/usersAction";
+import getFirstLetter from "../../utils/getFirstLetter";
 import {BiSend, HiEllipsisVertical} from "react-icons/all";
-import {fetchMessageAction} from "../redux/actions/messageAction";
-import {addMessageAction} from "../redux/ slices/authSlice";
+import {fetchMessageAction} from "../../redux/actions/messageAction";
+import {addMessageAction} from "../../redux/ slices/authSlice";
 import {io} from "socket.io-client";
-import ScrollBottom from "../components/ScrollBottom";
-import ActiveTimer from "../components/ActiveTimer";
+import ScrollBottom from "../../components/ScrollBottom";
+import ActiveTimer from "../../components/ActiveTimer";
+
+
+import "./styles.scss"
+import MessageInput from "../../components/MessageInput";
 
 
 const Messenger = () => {
@@ -91,20 +95,17 @@ const Messenger = () => {
 
 
     // shift + enter to send message
-    function handleSendMessage(e) {
-        if(e.shiftKey && e.keyCode === 13) {
-            let value = messageRef.current.value
+    function handleSendMessage({value, images}) {
 
-            if (!room && !messengerNsp) return alert("No room selected")
+        if (!room && !messengerNsp) return alert("No room selected")
 
-            // send message to server to broadcast to other participant
-            messengerNsp.emit("send-message", {
-                text: value,
-                roomId: room,
-                senderId: auth.id
-            })
-            messageRef.current.value = ""
-        }
+        // send message to server to broadcast to other participant
+        messengerNsp.emit("send-message", {
+            text: value,
+            roomId: room,
+            senderId: auth.id
+        })
+
     }
 
 
@@ -174,10 +175,11 @@ const Messenger = () => {
                                 </ScrollBottom>
                             </div>
                             <div className="message-fixed-input">
-
-                                    <div onKeyDown={handleSendMessage} className="w-full flex gap-x-2 items-center">
-                                        <textarea placeholder="Enter your message" ref={messageRef}  className="input" name="message"></textarea>
-                                    </div>
+                                <MessageInput onSubmit={handleSendMessage} />
+                                    {/*<div onKeyDown={handleSendMessage} className="w-full flex gap-x-2 items-center">*/}
+                                    {/*    <div></div>*/}
+                                    {/*    <textarea placeholder="Enter your message" ref={messageRef}  className="input" name="message"></textarea>*/}
+                                    {/*</div>*/}
                               </div>
                         </div>
 
