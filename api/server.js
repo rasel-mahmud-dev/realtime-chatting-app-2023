@@ -6,6 +6,11 @@ import cors from "cors"
 import client from "./prisma/client";
 import routes from "./routes";
 
+import {writeFile} from "fs"
+import fileUpload from "./services/fileUpload";
+import {log} from "webpack-node-externals/utils";
+import {re} from "@babel/core/lib/vendor/import-meta-resolve";
+
 
 require("dotenv").config({})
 
@@ -105,13 +110,13 @@ io.on("connection", (socket) => {
             console.log(ex)
         }
     });
-
 })
 
 const messengerNamespace = io.of("/messenger");
 
 messengerNamespace.on("connection", (socket) => {
     console.log(socket.id, " - messenger namespace")
+
 
     socket.on("send-message", async ({text, senderId, roomId}) => {
 
@@ -134,9 +139,34 @@ messengerNamespace.on("connection", (socket) => {
         } catch (ex){}
     })
 
+
+    socket.on("upload-file", async ({senderId, roomId, ...files}) => {
+        let promises = []
+        for (let filesKey in files) {
+            if(files[filesKey]){
+               promises.push(fileUpload(files[filesKey], filesKey))
+            }
+        }
+
+        let result = await Promise.allSettled(promises)
+        if(result){
+            let filePath = []
+            result.forEach(item=>{
+                if(item.status === "fulfilled"){
+                    filePath.push(item.value)
+                }
+            })
+            messengerNamespace.to(roomId).emit("receive-uploaded-file", {
+                senderId,
+                roomId,
+                files: filePath
+            })
+        }
+    })
+
+
     // when user join private room for one to one chatting
     socket.on("join-private-room", async (roomId) => {
-
         try{
             await socket.join(roomId)
             let newRoom = await client.room.upsert({

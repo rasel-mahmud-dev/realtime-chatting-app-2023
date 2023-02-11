@@ -71,6 +71,21 @@ const Messenger = () => {
                     }
                 }))
             })
+
+
+            socket.on("receive-uploaded-file", (data) => {
+                console.log(data)
+                // dispatch(addMessageAction({
+                //     senderId,
+                //     roomId,
+                //     text,
+                //     user: {
+                //         id: auth.id,
+                //         username: auth.username
+                //     }
+                // }))
+            })
+
         }
 
         return () => {
@@ -103,7 +118,8 @@ const Messenger = () => {
         messengerNsp.emit("send-message", {
             text: value,
             roomId: room,
-            senderId: auth.id
+            senderId: auth.id,
+            images: images,
         })
 
     }
@@ -175,7 +191,7 @@ const Messenger = () => {
                                 </ScrollBottom>
                             </div>
                             <div className="message-fixed-input">
-                                <MessageInput onSubmit={handleSendMessage} />
+                                <MessageInput auth={auth} roomId={room} messengerNsp={messengerNsp} onSubmit={handleSendMessage} />
                                     {/*<div onKeyDown={handleSendMessage} className="w-full flex gap-x-2 items-center">*/}
                                     {/*    <div></div>*/}
                                     {/*    <textarea placeholder="Enter your message" ref={messageRef}  className="input" name="message"></textarea>*/}
