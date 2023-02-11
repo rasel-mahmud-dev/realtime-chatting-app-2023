@@ -6,10 +6,9 @@ import cors from "cors"
 import client from "./prisma/client";
 import routes from "./routes";
 
-import {writeFile} from "fs"
+
 import fileUpload from "./services/fileUpload";
-import {log} from "webpack-node-externals/utils";
-import {re} from "@babel/core/lib/vendor/import-meta-resolve";
+import saveMessage from "./services/saveMessage";
 
 
 require("dotenv").config({})
@@ -21,6 +20,8 @@ const app = express();
 app.use(express.json())
 app.use(morgan("dev"));
 app.use(cors())
+
+app.use("/public/", express.static("public"))
 
 
 app.use(routes)
@@ -127,20 +128,11 @@ messengerNamespace.on("connection", (socket) => {
             senderId: senderId
         })
         // also store in database
-        try{
-            let newRoom = await client.message.create({
-                data: {
-                    roomId: roomId,
-                    text: text,
-                    seen: false,
-                    senderId: senderId,
-                }
-            })
-        } catch (ex){}
+        await saveMessage(roomId, text, "", senderId)
     })
 
 
-    socket.on("upload-file", async ({senderId, roomId, ...files}) => {
+    socket.on("upload-file", async ({senderId, roomId, text, ...files}) => {
         let promises = []
         for (let filesKey in files) {
             if(files[filesKey]){
@@ -159,8 +151,11 @@ messengerNamespace.on("connection", (socket) => {
             messengerNamespace.to(roomId).emit("receive-uploaded-file", {
                 senderId,
                 roomId,
+                text,
                 files: filePath
             })
+            // also store in database
+            await saveMessage(roomId, text, filePath, senderId)
         }
     })
 

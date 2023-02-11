@@ -13,6 +13,7 @@ import ActiveTimer from "../../components/ActiveTimer";
 
 import "./styles.scss"
 import MessageInput from "../../components/MessageInput";
+import filePath from "../../utils/filePath";
 
 
 const Messenger = () => {
@@ -73,17 +74,16 @@ const Messenger = () => {
             })
 
 
-            socket.on("receive-uploaded-file", (data) => {
-                console.log(data)
-                // dispatch(addMessageAction({
-                //     senderId,
-                //     roomId,
-                //     text,
-                //     user: {
-                //         id: auth.id,
-                //         username: auth.username
-                //     }
-                // }))
+            socket.on("receive-uploaded-file", ({senderId, roomId, files}) => {
+                dispatch(addMessageAction({
+                    senderId,
+                    roomId,
+                    files,
+                    user: {
+                        id: auth.id,
+                        username: auth.username
+                    }
+                }))
             })
 
         }
@@ -181,10 +181,21 @@ const Messenger = () => {
                                     <div className="chat_message" ref={messageListRef}>
                                         {messages && messages[room]?.map((msg) => (
                                             <div
-                                                className={`message-item  ${isYour(msg) ? "message-item-own" : "message-item-friend"}`}>
+                                                className={`message-item ${msg.files && msg.files.length > 0 ? "images" : ""}  ${isYour(msg) ? "message-item-own" : "message-item-friend"}`}>
                                                 <div
                                                     className="circle !w-8 !h-8 !text-xs">{getFirstLetter(currentChatFriend.username)}</div>
-                                                <p className="whitespace-pre-line">{msg.text}</p>
+
+                                                <div>
+                                                    {msg.text && <p className="whitespace-pre-line">{msg.text}</p> }
+
+                                                    <div className="flex flex-wrap">
+                                                        {msg.files && msg.files.map((file)=>(
+                                                            <div className="w-32">
+                                                                <img src={filePath(file)} alt=""/>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>

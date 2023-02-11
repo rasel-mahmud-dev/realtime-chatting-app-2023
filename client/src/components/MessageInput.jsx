@@ -40,6 +40,7 @@ const MessageInput = ({onSubmit, auth, messengerNsp, roomId}) => {
         messengerNsp.emit("upload-file", {
             roomId: roomId,
             senderId: auth.id,
+            text: inputRef.current?.textContent || "",
             ...makeKeyValueFile(updateImages)
         })
     }

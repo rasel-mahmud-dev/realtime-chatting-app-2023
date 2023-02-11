@@ -19,6 +19,7 @@ router.get("/:roomId",   async (req, res, next) => {
                 id: true,
                 seen: true,
                 senderId: true,
+                files: true,
                 sender: {
                     select: {
                         id: true,
