@@ -1,7 +1,7 @@
 @import "../src/sass/--mixin";
 
-.message-fixed-input {
 
+.message-fixed-input {
     textarea {
         height: 50px;
         margin-top: 20px;
@@ -14,12 +14,19 @@
     display: grid;
     grid-template-columns: 300px 1fr;
     column-gap: 20px;
+    @include getDown(600px){
+        grid-template-columns:  1fr;
+    }
 
     .message-sidebar {
         background: #2f2f2f;
         height: calc(100vh - var(--header-height) - 0px);
         overflow-y: auto;
-        @include custom-scrollbar()
+        @include custom-scrollbar();
+
+        @include getDown(600px){
+            display: none;
+        }
     }
 
     .chatting-box{

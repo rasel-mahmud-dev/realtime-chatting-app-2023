@@ -1,4 +1,3 @@
-
 ## Realtime Chatting Application (2023)
 
 
@@ -8,10 +7,11 @@
 - user can see who are in currently online (activity status).
 - user active status update when he/she leave site or login /logout
 - user can create private room to send message one to one. like facebook chat.
-- use can see their previous chat message.
+- realtime multiple image upload with text message.
+- use can see their previous chat messages.
 
 ### Database
-- MySQL
+- MySQL(Prisma ORM)
 
 
 ### Model
@@ -20,6 +20,7 @@ User
 - password
 - email 
 - isOnline (boolean)
+- lastActive Date
 
 
 Room
@@ -27,6 +28,7 @@ Room
 
 Message
 - text 
+- files JSON
 - senderId (User)
 - receiverId (User)
 - roomId (Room Table rootId ref)
@@ -42,12 +44,16 @@ Message
 - Socket.io
 - Prisma (ORM)
 - ExpressJS
+- jsonwebtoken
 - MySql
 
 
 ### Previews 
 Homepage list of users
 ![](thumbs/localhost_5173_messenger_14asd.webp)
+
+Chat with images
+![](thumbs/2023-02-11_155807copy.webp)
 
 Messenger
 ![](thumbs/localhost_5173_messenger_14ewrwerpy.webp)

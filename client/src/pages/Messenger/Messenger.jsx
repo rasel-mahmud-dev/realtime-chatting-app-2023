@@ -61,23 +61,11 @@ const Messenger = () => {
 
         if (socket) {
             // received message event listener
-            socket.on("received-msg", ({senderId, roomId, text}) => {
+            socket.on("received-msg", ({senderId, roomId, text, files = []}) => {
                 dispatch(addMessageAction({
                     senderId,
                     roomId,
                     text,
-                    user: {
-                        id: auth.id,
-                        username: auth.username
-                    }
-                }))
-            })
-
-
-            socket.on("receive-uploaded-file", ({senderId, roomId, files}) => {
-                dispatch(addMessageAction({
-                    senderId,
-                    roomId,
                     files,
                     user: {
                         id: auth.id,
@@ -85,7 +73,6 @@ const Messenger = () => {
                     }
                 }))
             })
-
         }
 
         return () => {
@@ -106,23 +93,6 @@ const Messenger = () => {
     useEffect(() => {
         dispatch(fetchUsersAction())
     }, [])
-
-
-
-    // shift + enter to send message
-    function handleSendMessage({value, images}) {
-
-        if (!room && !messengerNsp) return alert("No room selected")
-
-        // send message to server to broadcast to other participant
-        messengerNsp.emit("send-message", {
-            text: value,
-            roomId: room,
-            senderId: auth.id,
-            images: images,
-        })
-
-    }
 
 
     function startOneToOneChat(user) {
@@ -202,11 +172,7 @@ const Messenger = () => {
                                 </ScrollBottom>
                             </div>
                             <div className="message-fixed-input">
-                                <MessageInput auth={auth} roomId={room} messengerNsp={messengerNsp} onSubmit={handleSendMessage} />
-                                    {/*<div onKeyDown={handleSendMessage} className="w-full flex gap-x-2 items-center">*/}
-                                    {/*    <div></div>*/}
-                                    {/*    <textarea placeholder="Enter your message" ref={messageRef}  className="input" name="message"></textarea>*/}
-                                    {/*</div>*/}
+                                <MessageInput auth={auth} roomId={room} messengerNsp={messengerNsp} />
                               </div>
                         </div>
 

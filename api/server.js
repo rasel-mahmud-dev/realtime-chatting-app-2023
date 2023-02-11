@@ -46,34 +46,6 @@ let io = new Server(httpServer, {
 io.on("connection", (socket) => {
     console.log(socket.id, " - connected")
 
-    socket.on("send-message", async ({text, senderId, roomId}) => {
-        // for send all listener
-        // io.emit("received-msg", {
-        //     text: payload,
-        //     roomId: "sdfffffffffff"
-        // })
-
-
-        // broadcast to other participant
-        io.to(roomId).emit("received-msg", {
-            text: text,
-            roomId: roomId,
-            senderId: senderId
-        })
-        // also store in database
-        try{
-            let newRoom = await client.message.create({
-                data: {
-                    roomId: roomId,
-                    text: text,
-                    seen: false,
-                    senderId: senderId,
-                }
-            })
-        } catch (ex){}
-    })
-
-
     // when user join site or login then this event listener fn call
     socket.on("join-online", async (userId) => {
         try{
@@ -113,51 +85,47 @@ io.on("connection", (socket) => {
     });
 })
 
+
+
 const messengerNamespace = io.of("/messenger");
 
 messengerNamespace.on("connection", (socket) => {
     console.log(socket.id, " - messenger namespace")
 
 
-    socket.on("send-message", async ({text, senderId, roomId}) => {
-
-        // broadcast to other participant
-        messengerNamespace.to(roomId).emit("received-msg", {
-            text: text,
-            roomId: roomId,
-            senderId: senderId
-        })
-        // also store in database
-        await saveMessage(roomId, text, "", senderId)
-    })
-
-
-    socket.on("upload-file", async ({senderId, roomId, text, ...files}) => {
+    socket.on("send-message", async ({text, senderId, roomId, ...files}) => {
         let promises = []
+
         for (let filesKey in files) {
             if(files[filesKey]){
-               promises.push(fileUpload(files[filesKey], filesKey))
+                promises.push(fileUpload(files[filesKey], filesKey))
             }
         }
 
+        let filePath = []
         let result = await Promise.allSettled(promises)
         if(result){
-            let filePath = []
             result.forEach(item=>{
                 if(item.status === "fulfilled"){
                     filePath.push(item.value)
                 }
             })
-            messengerNamespace.to(roomId).emit("receive-uploaded-file", {
-                senderId,
-                roomId,
-                text,
-                files: filePath
-            })
             // also store in database
             await saveMessage(roomId, text, filePath, senderId)
+        } else {
+            await saveMessage(roomId, text, [], senderId)
         }
+
+
+        // broadcast to other participant
+        messengerNamespace.to(roomId).emit("received-msg", {
+            senderId,
+            roomId,
+            text,
+            files: filePath
+        })
     })
+
 
 
     // when user join private room for one to one chatting

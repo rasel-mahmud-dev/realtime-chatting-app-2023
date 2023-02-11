@@ -3,20 +3,26 @@ import { GrEmoji, ImImage} from "react-icons/all";
 import blobToBase64 from "../utils/blobToBase64";
 
 
-const MessageInput = ({onSubmit, auth, messengerNsp, roomId}) => {
-    const [isFocus, setFocus] = useState(false)
+const MessageInput = ({auth, messengerNsp, roomId}) => {
+
     const inputRef = useRef()
 
     const [images, setImages] = useState({})
 
     function handleSendMessage(e) {
+        // shift + enter to send message
         if(e.shiftKey && e.keyCode === 13){
-            // onSubmit({
-            //     value: e.target.textContent,
-            // })
+            messengerNsp.emit("send-message", {
+                roomId: roomId,
+                senderId: auth.id,
+                text: inputRef.current?.textContent || "",
+                ...makeKeyValueFile(images)
+            })
+            setImages({})
             inputRef.current.innerHTML = null
         }
     }
+
 
     function handleChooseImage(){
         let imgInput = document.createElement("input")
@@ -24,6 +30,7 @@ const MessageInput = ({onSubmit, auth, messengerNsp, roomId}) => {
         imgInput.addEventListener("change", imageChange)
         imgInput.click()
     }
+
 
     async function imageChange(e){
         let file = e.target.files[0]
@@ -36,15 +43,7 @@ const MessageInput = ({onSubmit, auth, messengerNsp, roomId}) => {
         }
 
         setImages(updateImages)
-
-        messengerNsp.emit("upload-file", {
-            roomId: roomId,
-            senderId: auth.id,
-            text: inputRef.current?.textContent || "",
-            ...makeKeyValueFile(updateImages)
-        })
     }
-
 
     function makeKeyValueFile(images){
         let uploadImages = {}
@@ -56,11 +55,10 @@ const MessageInput = ({onSubmit, auth, messengerNsp, roomId}) => {
         return uploadImages
     }
 
+
     return (
         <div className="mt-4">
-
             <div className="message-input ">
-
                 <div className="w-full">
                     <div  onKeyDown={handleSendMessage} className="input2" ref={inputRef} contentEditable="true">Enter Message</div>
 

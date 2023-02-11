@@ -9,3 +9,10 @@
         background: rgba(63, 119, 252, 0.39);
     }
 }
+
+
+@mixin getDown($size){
+    @media screen and (max-width: #{$size}) {
+        @content
+    }
+}
