@@ -1,6 +1,21 @@
 ## Realtime Chatting Application (2023)
 
 
+### Run Projects
+```bash
+
+// run frontend
+cd client && yarn dev 
+
+// run server
+cd api && yarn dev
+
+// migrate database 
+npx prisma migrate dev
+
+
+```
+
 
 ### Features 
 - login and registration.
