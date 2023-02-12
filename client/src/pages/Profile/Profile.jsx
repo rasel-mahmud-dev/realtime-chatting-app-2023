@@ -25,9 +25,9 @@ function Profile() {
 
             <div>
                 {profile && (
-                    <div>
+                    <div className="card">
                         <div className="circle !w-8 !h-8 !text-xs">
-                            {getFirstLetter(currentChatFriend.username)}
+                            {getFirstLetter(profile.username)}
                         </div>
  
                         <h3>{profile.username}</h3>

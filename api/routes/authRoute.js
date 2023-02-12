@@ -32,6 +32,34 @@ router.get("/fetch-auth", auth, async (req, res, next) => {
 })
 
 
+router.get("/profile", auth, async (req, res, next) => {
+    try {
+
+        let user = await client.user.findUnique({
+            where: {
+                id: Number(req.user.id)
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                createdAt: true
+            }
+        })
+
+        if (!user) {
+            return res.status(404).json({message: "User not found"})
+        }
+
+        res.send(user)
+
+    } catch (ex) {
+        res.send(ex.message)
+    }
+})
+
+
+
 router.post("/login", async (req, res, next) => {
     try {
         const {email, password} = req.body

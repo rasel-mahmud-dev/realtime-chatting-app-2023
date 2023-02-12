@@ -87,14 +87,20 @@ export const registerAction = createAsyncThunk("authState/register", async (payl
 export const fetchProfileAction = createAsyncThunk("/auth/profile", async ()=>{
     try{
 
-        let res = await fetch(API + "/api/auth/profile")
+        let token = localStorage.getItem("token") || ""
+        let res = await fetch(API + "/api/auth/profile", {
+            method: "GET",
+            headers: {
+                token
+            }
+        })
  
          let result = await res.json()
  
          if(res.status > 400){
              throw Error(result.message)
          } else{
-             return result.profile
+             return result
          }
  
      }catch (ex){
