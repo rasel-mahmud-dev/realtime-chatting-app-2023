@@ -9,6 +9,7 @@ import routes from "./routes";
 
 import fileUpload from "./services/fileUpload";
 import saveMessage from "./services/saveMessage";
+import { parseToken } from "./services/jwt";
 
 
 require("dotenv").config({})
@@ -66,11 +67,23 @@ io.on("connection", (socket) => {
 
 
     // when user leave site or logout then this event listener fn call
-    socket.on("leave-online", async (userId) => {
+    socket.on("leave-online", async ({token, userId}) => {
         try{
+            console.log(token, userId);
+            let id = userId 
+            if(token){
+                let data =  parseToken(token) 
+                if(!data) return 
+                id = data.userId
+            } else{
+                return;
+            }
+
+             console.log(userId +"leave");  
+            
             let update = await client.user.update({
                 where: {
-                    id: Number(userId)
+                    id: Number(id)
                 },
                 data: {
                     isOnline: false,

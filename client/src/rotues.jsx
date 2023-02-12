@@ -5,7 +5,8 @@ import React from "react";
 import Login from "./components/Login";
 import HomePage from "./pages/HomePage";
 import Register from "./components/Register";
-import PrivateRoute from "./middleware/PrivateRoute";
+import PrivateRoute from "./middleware/PrivateRoute"; 
+import Profile from "./pages/Profile/Profile"
 
 const router = createBrowserRouter([
     {
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
             {path: "register", element: <Register/>},
             {path: "messenger/:friendId", element: <PrivateRoute><Messenger/></PrivateRoute>},
             {path: "messenger", element: <PrivateRoute><Messenger/></PrivateRoute>},
+            {path: "profile", element: <PrivateRoute><Profile/></PrivateRoute>},
         ]
     }
 ]);

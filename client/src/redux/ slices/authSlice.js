@@ -1,12 +1,15 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {loginAction, registerAction} from "../actions/authAction";
 import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../actions/usersAction";
-import {fetchMessageAction} from "../actions/messageAction";
+import {fetchMessageAction} from "../actions/messageAction"; 
+
+import { fetchProfileAction } from "../actions/authAction";
 
 const authSlice = createSlice({
     name: 'authState',
     initialState: {
         auth: null,
+        profile: null,
         authLoading: false,
         users: [],
         messages: {}, // caching for all roomId
@@ -86,6 +89,12 @@ const authSlice = createSlice({
         builder.addCase(fetchCurrentChatFriendProfileAction.fulfilled, (state, action) => {
             if(action.payload){
                 state.currentChatFriend = action.payload
+            }
+        })
+
+        builder.addCase(fetchProfileAction.fulfilled, (state, action) => {
+            if(action.payload){
+                state.profile = action.payload
             }
         })
     }

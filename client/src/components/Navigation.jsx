@@ -21,7 +21,7 @@ const Navigation = () => {
         if (!auth) return;
 
         if (socket) {
-            socket.emit("leave-online", auth.id)
+            socket.emit("leave-online", {userId: auth.id})
         }
         dispatch(logoutAction())
     }

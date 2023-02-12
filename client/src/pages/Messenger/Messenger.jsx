@@ -1,9 +1,9 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchCurrentChatFriendProfileAction, fetchUsersAction} from "../../redux/actions/usersAction";
 import getFirstLetter from "../../utils/getFirstLetter";
-import {BiSend, HiEllipsisVertical} from "react-icons/all";
+import { HiEllipsisVertical} from "react-icons/all";
 import {fetchMessageAction} from "../../redux/actions/messageAction";
 import {addMessageAction} from "../../redux/ slices/authSlice";
 import {io} from "socket.io-client";
@@ -158,13 +158,13 @@ const Messenger = () => {
                                                 <div>
                                                     {msg.text && <p className="whitespace-pre-line">{msg.text}</p> }
 
-                                                    <div className="flex flex-wrap">
-                                                        {msg.files && msg.files.map((file)=>(
+                                                    {msg.files && <div className="flex flex-wrap mt-1">
+                                                        {msg.files.map((file)=>(
                                                             <div className="w-32">
                                                                 <img src={filePath(file)} alt=""/>
                                                             </div>
                                                         ))}
-                                                    </div>
+                                                    </div> }
                                                 </div>
                                             </div>
                                         ))}

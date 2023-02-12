@@ -10,7 +10,9 @@ import {useDispatch, useSelector} from "react-redux";
 
 import SocketContext from "./socket/SocketContext";
 import {addMessageAction, updateFriendStatus} from "./redux/ slices/authSlice";
+import { WiSnow } from 'react-icons/wi';
 
+let s = {}
 
 function App() {
 
@@ -26,7 +28,7 @@ function App() {
 
     useEffect(() => {
         if (auth) {
-            let s = io("http://localhost:2000")
+            s = io("http://localhost:2000")
             s.emit("join-online", auth.id)
 
             // event listener for join user notification
@@ -37,22 +39,18 @@ function App() {
                     isOnline: true
                 }))
             })
-            setSocket(s)
-        }
-    }, [auth])
-
-
-
-
-    useEffect(() => {
-        if (socket) {
             // event listener for user leave notification
-            socket.on("leave-online-response", (userId)=>{
+            s.on("leave-online-response", (userId)=>{
                 console.log("successfully leave from online ", userId)
                 dispatch(updateFriendStatus({id: userId, isOnline: false, lastActive: new Date().toISOString()}))
             })
+         
+            setSocket(s)
         }
-    }, [socket])
+
+    }, [auth])
+
+
 
     function storeMessage(text) {
         setMessages([
